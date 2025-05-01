@@ -11,84 +11,114 @@ import java.util.List;
 
 public class XeMayView extends JFrame {
     private JTable table;
-    private JScrollPane scrollPane;
+    private JComboBox<String> cbLoai, cbTrangThai;
+    private JButton btnLocLoai, btnLocTrangThai;
 
     public XeMayView() {
         setTitle("Danh sách Xe Máy");
-        setSize(800, 400);
+        setSize(900, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
+        initFilters();
         loadData();
     }
 
     private void initComponents() {
-        // Tạo model cho bảng
         String[] columnNames = {"ID", "Biển số", "Tên xe", "Loại xe", "Trạng thái", "Giá thuê/ngày"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Không cho phép chỉnh sửa trực tiếp trên bảng
+                return false;
             }
         };
 
         table = new JTable(model);
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        
-        // Đặt màu cho các dòng xen kẽ
+
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                   boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, 
-                        isSelected, hasFocus, row, column);
-                
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (!isSelected) {
                     c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(240, 240, 240));
                 }
-                
-                // Đổi màu theo trạng thái
-                if (column == 4) { // Cột trạng thái
+                if (column == 4) {
                     String status = (String) value;
-                    if (status.equals("dang_thue")) {
+                    if (status.equals("Đang thuê")) {
                         c.setBackground(new Color(255, 200, 200));
-                    } else if (status.equals("bi_hong")) {
+                    } else if (status.equals("Bị hỏng")) {
                         c.setBackground(new Color(255, 255, 150));
                     }
                 }
-                
                 return c;
             }
         });
 
-        scrollPane = new JScrollPane(table);
-        add(scrollPane, BorderLayout.CENTER);
+        add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Thêm nút làm mới
         JButton btnRefresh = new JButton("Làm mới");
         btnRefresh.addActionListener(e -> loadData());
-        JPanel panel = new JPanel();
-        panel.add(btnRefresh);
-        add(panel, BorderLayout.SOUTH);
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.add(btnRefresh);
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    private void initFilters() {
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        cbLoai = new JComboBox<>(new String[]{"tat_ca", "tay ga", "so"});
+        cbTrangThai = new JComboBox<>(new String[]{"tat_ca", "san_sang", "dang_thue", "bi_hong"});
+        btnLocLoai = new JButton("Lọc theo loại");
+        btnLocTrangThai = new JButton("Lọc theo trạng thái");
+
+        filterPanel.add(new JLabel("Loại xe:"));
+        filterPanel.add(cbLoai);
+        filterPanel.add(btnLocLoai);
+        filterPanel.add(Box.createHorizontalStrut(30));
+        filterPanel.add(new JLabel("Trạng thái:"));
+        filterPanel.add(cbTrangThai);
+        filterPanel.add(btnLocTrangThai);
+
+        add(filterPanel, BorderLayout.NORTH);
+
+        btnLocLoai.addActionListener(e -> {
+            String loai = cbLoai.getSelectedItem().toString();
+            if (loai.equals("tat_ca")) {
+                loadData();
+            } else {
+                loadData(XeMayController.getByLoai(loai));
+            }
+        });
+
+        btnLocTrangThai.addActionListener(e -> {
+            String tt = cbTrangThai.getSelectedItem().toString();
+            if (tt.equals("tat_ca")) {
+                loadData();
+            } else {
+                loadData(XeMayController.getByTrangThai(tt));
+            }
+        });
     }
 
     private void loadData() {
-        List<XeMay> dsXe = XeMayController.getAll();
+        loadData(XeMayController.getAll());
+    }
+
+    private void loadData(List<XeMay> dsXe) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
+        model.setRowCount(0);
 
         for (XeMay xe : dsXe) {
-            // Chuyển đổi trạng thái sang tiếng Việt
-            String trangThai = "";
-            switch (xe.getTrangThai()) {
-                case "san_sang": trangThai = "Sẵn sàng"; break;
-                case "dang_thue": trangThai = "Đang thuê"; break;
-                case "bi_hong": trangThai = "Bị hỏng"; break;
-                default: trangThai = xe.getTrangThai();
-            }
+            String trangThai = switch (xe.getTrangThai()) {
+                case "san_sang" -> "Sẵn sàng";
+                case "dang_thue" -> "Đang thuê";
+                case "bi_hong" -> "Bị hỏng";
+                default -> xe.getTrangThai();
+            };
 
-            Object[] rowData = {
+            Object[] row = {
                 xe.getId(),
                 xe.getBienSo(),
                 xe.getTenXe(),
@@ -96,14 +126,11 @@ public class XeMayView extends JFrame {
                 trangThai,
                 String.format("%,d VND", xe.getGiaThue())
             };
-            model.addRow(rowData);
+            model.addRow(row);
         }
     }
 
 //    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            XeMayView view = new XeMayView();
-//            view.setVisible(true);
-//        });
+//        SwingUtilities.invokeLater(() -> new XeMayView().setVisible(true));
 //    }
 }

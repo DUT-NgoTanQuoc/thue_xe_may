@@ -27,4 +27,12 @@ public class XeMayController {
 	    }
 	    return list;
 	}
+	public static List<XeMay> getByLoai(String loai) {
+        return XeMay.getByLoai(loai);
+    }
+
+    public static List<XeMay> getByTrangThai(String trangThai) {
+        return XeMay.getByTrangThai(trangThai);
+    }
+
 }

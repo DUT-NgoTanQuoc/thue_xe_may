@@ -20,87 +20,23 @@ public class XeMay {
         this.giaThue = giaThue;
     }
 
+    // Getters and Setters
     public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
     public String getBienSo() { return bienSo; }
+    public void setBienSo(String bienSo) { this.bienSo = bienSo; }
     public String getTenXe() { return tenXe; }
+    public void setTenXe(String tenXe) { this.tenXe = tenXe; }
     public String getLoaiXe() { return loaiXe; }
+    public void setLoaiXe(String loaiXe) { this.loaiXe = loaiXe; }
     public String getTrangThai() { return trangThai; }
+    public void setTrangThai(String trangThai) { this.trangThai = trangThai; }
     public int getGiaThue() { return giaThue; }
-
-    public static List<XeMay> getAll() {
-        List<XeMay> list = new ArrayList<>();
-        String sql = "SELECT * FROM xe_may";
-        try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                XeMay xe = new XeMay(
-                    rs.getInt("id"),
-                    rs.getString("bien_so"),
-                    rs.getString("ten_xe"),
-                    rs.getString("loai_xe"),
-                    rs.getString("trang_thai"),
-                    rs.getInt("gia_thue_theo_ngay")
-                );
-                list.add(xe);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public static List<XeMay> getByLoai(String loaiXe) {
-        List<XeMay> list = new ArrayList<>();
-        String sql = "SELECT * FROM xe_may WHERE loai_xe = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, loaiXe);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                XeMay xe = new XeMay(
-                    rs.getInt("id"),
-                    rs.getString("bien_so"),
-                    rs.getString("ten_xe"),
-                    rs.getString("loai_xe"),
-                    rs.getString("trang_thai"),
-                    rs.getInt("gia_thue_theo_ngay")
-                );
-                list.add(xe);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public static List<XeMay> getByTrangThai(String trangThai) {
-        List<XeMay> list = new ArrayList<>();
-        String sql = "SELECT * FROM xe_may WHERE trang_thai = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, trangThai);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                XeMay xe = new XeMay(
-                    rs.getInt("id"),
-                    rs.getString("bien_so"),
-                    rs.getString("ten_xe"),
-                    rs.getString("loai_xe"),
-                    rs.getString("trang_thai"),
-                    rs.getInt("gia_thue_theo_ngay")
-                );
-                list.add(xe);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
+    public void setGiaThue(int giaThue) { this.giaThue = giaThue; }
+    
     @Override
     public String toString() {
         return bienSo + " - " + tenXe + " (" + loaiXe + ")";
     }
+
 }

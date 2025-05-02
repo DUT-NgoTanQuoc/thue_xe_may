@@ -63,7 +63,7 @@ public class XeMayView extends JFrame {
         JButton btnThem = new JButton("Thêm");
         JButton btnSua = new JButton("Sửa");
         JButton btnXoa = new JButton("Xóa");
-        JButton btnRefresh = new JButton("Làm mới");
+        JButton btnRefresh = new JButton("Refresh");
 
         // Thiết lập kích thước cho các nút
         Dimension buttonSize = new Dimension(120, 30);
@@ -122,7 +122,7 @@ public class XeMayView extends JFrame {
             if (loai.equals("Tất cả")) {
                 loadData();
             } else {
-                loadData(XeMayController.getByLoai(loai.equals("Tay ga") ? "tay_ga" : "so"));
+                loadData(XeMayController.getByLoai(loai.equals("Tay ga") ? "tay ga" : "so"));
             }
         });
 

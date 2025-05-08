@@ -5,13 +5,22 @@ import java.sql.*;
 import java.util.*;
 
 public class HoaDonController {
-    public List<HoaDon> getAll() {
+    public static List<HoaDon> getAll() {
         List<HoaDon> list = new ArrayList<>();
         try (Connection con = DBConnection.getConnection();
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM hoa_don")) {
             while (rs.next()) {
-                HoaDon hd = new HoaDon(); // gán các field
+                HoaDon hd = new HoaDon(
+                        rs.getInt("id"),
+                        rs.getInt("xe_id"),
+                        rs.getInt("nguoi_dung_id"),
+                        rs.getInt("khach_hang_id"),
+                        rs.getTimestamp("thoi_gian_bat_dau"),
+                        rs.getTimestamp("thoi_gian_ket_thuc"),
+                        rs.getLong("tong_tien")
+                    );
+// gán các field
                 list.add(hd);
             }
         } catch (Exception e) {
@@ -72,6 +81,20 @@ public class HoaDonController {
 	}
 	return false;
     }
+    
+    public static boolean deleteHoaDon(int id) {
+        String sql = "DELETE FROM hoa_don WHERE id = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     private static long layGiaThueXe(int xeId) throws SQLException {
     	String sql = "SELECT gia_thue_theo_ngay FROM xe_may WHERE id = ?";
@@ -85,6 +108,8 @@ public class HoaDonController {
     	}
     	throw new SQLException("Không tìm thấy xe với ID: " + xeId);
     }
+    
+    
 
     private static void capNhatTrangThaiXe(int xeId, String trangThai) throws SQLException {
     	String sql = "UPDATE xe_may SET trang_thai = ? WHERE id = ?";

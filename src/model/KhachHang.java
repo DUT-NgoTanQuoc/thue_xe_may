@@ -12,6 +12,39 @@ public class KhachHang {
         this.sdt = sdt;
         this.email = email;
     }
+    public KhachHang () {
+    	
+    }
+    public void setId(int id) { this.id = id; }
+    public void setCccd(String cccd) { this.cccd = cccd; }
+    public void setTen(String ten) { this.ten = ten; }
+    public void setDiaChi(String diaChi) { this.diaChi = diaChi; }
+    public void setSdt(String sdt) { this.sdt = sdt; }
+    public void setEmail(String email) { this.email = email; }
+    
+    public int getId() {
+        return id;
+    }
+
+    public String getCccd() {
+        return cccd;
+    }
+
+    public String getTen() {
+        return ten;
+    }
+
+    public String getDiaChi() {
+        return diaChi;
+    }
+
+    public String getSdt() {
+        return sdt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 
     @Override
     public String toString() {

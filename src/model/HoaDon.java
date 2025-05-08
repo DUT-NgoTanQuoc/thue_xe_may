@@ -10,14 +10,41 @@ public class HoaDon {
     public HoaDon () {
     	
     }
-    public HoaDon(int xeId, int nguoiDungId, int khachHangId, Timestamp batDau, Timestamp ketThuc, long tongTien) {
-        this.xeId = xeId;
+    public HoaDon(int id,int xeId, int nguoiDungId, int khachHangId, Timestamp batDau, Timestamp ketThuc, long tongTien) {
+        this.id=id;
+    	this.xeId = xeId;
         this.nguoiDungId = nguoiDungId;
         this.khachHangId = khachHangId;
         this.batDau = batDau;
         this.ketThuc = ketThuc;
         this.tongTien = tongTien;
     }
+    public int getXeId() {
+        return xeId;
+    }
+    
+    public int getId()
+    {
+    	return id;
+    }
+    public int getNguoiDungId() {
+        return nguoiDungId;
+    }
+
+    public int getKhachHangId() {
+        return khachHangId;
+    }
+
+    public Timestamp getBatDau() {
+        return batDau;
+    }
+
+    public Timestamp getKetThuc() {
+        return ketThuc;
+    }
+
+    
+
     public long getTongTien() {
         return tongTien;
     }

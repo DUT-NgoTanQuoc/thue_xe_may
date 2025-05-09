@@ -4,6 +4,8 @@ import model.*;
 import java.sql.*;
 import java.util.*;
 
+import javax.swing.JOptionPane;
+
 public class HoaDonController {
     public static List<HoaDon> getAll() {
         List<HoaDon> list = new ArrayList<>();
@@ -48,6 +50,13 @@ public class HoaDonController {
     }
     public static boolean taoHoaDon(int xeId, int nguoiDungId, int khachHangId, 
             String batDauStr, String ketThucStr, int soNgay) {
+    	if (!kiemTraTrangThaiXe(xeId, "san_sang")) {
+            // Nếu xe không sẵn sàng (có thể là "dang_thue" hoặc "hong"), không thể tạo hóa đơn
+            JOptionPane.showMessageDialog(null, "Xe không sẵn sàng để thuê.", 
+                                          "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    	
     	String sql = "INSERT INTO hoa_don (xe_id, nguoi_dung_id, khach_hang_id, " +
     				"thoi_gian_bat_dau, thoi_gian_ket_thuc, tong_tien) " +
     				"VALUES (?, ?, ?, ?, ?, ?)";
@@ -80,7 +89,48 @@ public class HoaDonController {
 		e.printStackTrace();
 	}
 	return false;
+    } 
+    private static boolean kiemTraTrangThaiXe(int xeId, String trangThai) {
+        String sql = "SELECT COUNT(*) FROM xe WHERE xe_id = ? AND trang_thai = ?";
+        
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            
+            stmt.setInt(1, xeId);
+            stmt.setString(2, trangThai);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return true;  
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi kiểm tra trạng thái xe: " + e.getMessage(), 
+                                          "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+        return false;  
     }
+    public static int timKhachHangIdTheoCCCD(String cccd) {
+        String sql = "SELECT id FROM khach_hang WHERE cccd = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setString(1, cccd);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi tìm khách hàng theo CCCD: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+
     
     public static boolean deleteHoaDon(int id) {
         String sql = "DELETE FROM hoa_don WHERE id = ?";

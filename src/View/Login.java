@@ -41,11 +41,11 @@ public class Login extends JFrame {
 
             if (result == 1) {
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công (Admin)");
-                new NhanVienView().setVisible(true); // ví dụ admin vào quản lý nhân viên
+                new Main().setVisible(true); // ví dụ admin vào quản lý nhân viên
                 this.dispose();
             } else if (result == 2) {
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công (Nhân viên)");
-                new XeMayView().setVisible(true); // ví dụ nhân viên vào xe máy
+                new NVienView().setVisible(true); // ví dụ nhân viên vào xe máy
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Sai tài khoản hoặc mật khẩu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -55,7 +55,7 @@ public class Login extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Login().setVisible(true);
-        });
+           new Login().setVisible(true);
+       });
     }
 }

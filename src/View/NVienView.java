@@ -1,10 +1,77 @@
 package View;
 
-import controller.HoaDonController;
-import controller.NguoiDungController;
-
 import javax.swing.*;
 import java.awt.*;
-public class NVienView {
+import java.awt.event.ActionListener;
 
+public class NVienView extends JFrame {
+
+    public NVienView() {
+        initUI();
+    }
+
+    private void initUI() {
+        setTitle("Giao diện Nhân viên");
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        createMenuBar();
+        createMainPanel();
+    }
+
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu mnChucNang = new JMenu("Chức năng");
+        mnChucNang.add(createMenuItem("Hóa đơn", e -> openHoaDonView()));
+        mnChucNang.add(createMenuItem("Khách hàng", e -> openKhachHangView()));
+        mnChucNang.addSeparator();
+        mnChucNang.add(createMenuItem("Đăng xuất", e -> dispose()));
+
+        menuBar.add(mnChucNang);
+        setJMenuBar(menuBar);
+    }
+
+    private JMenuItem createMenuItem(String text, ActionListener action) {
+        JMenuItem item = new JMenuItem(text);
+        item.addActionListener(action);
+        return item;
+    }
+
+    private void createMainPanel() {
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(new Color(70, 130, 180));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
+
+        JLabel lblTitle = new JLabel("CHỨC NĂNG DÀNH CHO NHÂN VIÊN");
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        lblTitle.setForeground(Color.WHITE);
+        headerPanel.add(lblTitle);
+
+        JPanel contentPanel = new JPanel(new GridBagLayout());
+        JLabel lblWelcome = new JLabel("Chọn chức năng ở thanh menu phía trên để bắt đầu");
+        lblWelcome.setFont(new Font("Arial", Font.PLAIN, 16));
+        contentPanel.add(lblWelcome);
+
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+        add(mainPanel);
+    }
+
+    private void openHoaDonView() {
+        SwingUtilities.invokeLater(() -> new HoaDonMainView().setVisible(true));
+    }
+
+    private void openKhachHangView() {
+        SwingUtilities.invokeLater(() -> new KhachHangView().setVisible(true));
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new NVienView().setVisible(true));
+    }
 }

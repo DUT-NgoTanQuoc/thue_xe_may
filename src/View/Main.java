@@ -102,10 +102,10 @@ public class Main extends JFrame {
         });
     }
     
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Main app = new Main();
-            app.setVisible(true);
-        });
-    }
+  //  public static void main(String[] args) {
+  //      SwingUtilities.invokeLater(() -> {
+   //         Main app = new Main();
+   //         app.setVisible(true);
+   //     });
+   // }
 }

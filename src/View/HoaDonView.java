@@ -3,38 +3,78 @@ package View;
 import controller.HoaDonController;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class HoaDonView extends JFrame {
     private JTextField tfXeID, tfNguoiDungID, tfKhachHangID, tfSoNgay;
-    private JButton btnTaoHoaDon;
+    private JButton btnTaoHoaDon, btnHuy;
 
     public HoaDonView() {
         setTitle("Tạo Hóa đơn thuê xe");
-        setSize(400, 300);
+        setSize(450, 320);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(6, 2));
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        add(new JLabel("ID Xe:"));
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        Font font = new Font("Segoe UI", Font.PLAIN, 14);
+
+        JLabel lb1 = new JLabel("ID Xe:");
+        lb1.setFont(font);
         tfXeID = new JTextField();
-        add(tfXeID);
+        tfXeID.setFont(font);
 
-        add(new JLabel("ID Nhân viên:"));
+        JLabel lb2 = new JLabel("ID Nhân viên:");
+        lb2.setFont(font);
         tfNguoiDungID = new JTextField();
-        add(tfNguoiDungID);
+        tfNguoiDungID.setFont(font);
 
-        add(new JLabel("ID Khách hàng:"));
+        JLabel lb3 = new JLabel("ID Khach Hang:");
+        lb3.setFont(font);
         tfKhachHangID = new JTextField();
-        add(tfKhachHangID);
+        tfKhachHangID.setFont(font);
 
-        add(new JLabel("Số ngày thuê:"));
+        JLabel lb4 = new JLabel("Số ngày thuê:");
+        lb4.setFont(font);
         tfSoNgay = new JTextField();
-        add(tfSoNgay);
+        tfSoNgay.setFont(font);
 
         btnTaoHoaDon = new JButton("Tạo Hóa đơn");
-        add(btnTaoHoaDon);
+        btnTaoHoaDon.setFont(font);
+        btnTaoHoaDon.setBackground(new Color(60, 130, 220));
+        btnTaoHoaDon.setForeground(Color.WHITE);
+
+        btnHuy = new JButton("Huỷ");
+        btnHuy.setFont(font);
+        btnHuy.setBackground(new Color(200, 60, 60));
+        btnHuy.setForeground(Color.WHITE);
+
+        gbc.gridx = 0; gbc.gridy = 0; mainPanel.add(lb1, gbc);
+        gbc.gridx = 1; gbc.gridy = 0; mainPanel.add(tfXeID, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; mainPanel.add(lb2, gbc);
+        gbc.gridx = 1; gbc.gridy = 1; mainPanel.add(tfNguoiDungID, gbc);
+        gbc.gridx = 0; gbc.gridy = 2; mainPanel.add(lb3, gbc);
+        gbc.gridx = 1; gbc.gridy = 2; mainPanel.add(tfKhachHangID, gbc);
+        gbc.gridx = 0; gbc.gridy = 3; mainPanel.add(lb4, gbc);
+        gbc.gridx = 1; gbc.gridy = 3; mainPanel.add(tfSoNgay, gbc);
+
+        // Panel chứa 2 nút
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.add(btnHuy);
+        buttonPanel.add(btnTaoHoaDon);
+
+        gbc.gridx = 1; gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        mainPanel.add(buttonPanel, gbc);
+
+        setContentPane(mainPanel);
 
         btnTaoHoaDon.addActionListener(e -> {
             try {
@@ -48,15 +88,14 @@ public class HoaDonView extends JFrame {
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
                 boolean result = HoaDonController.taoHoaDon(
-                    xeId, nguoiDungId, khachHangId,
-                    now.format(fmt),
-                    ketThuc.format(fmt),
-                    soNgay
+                        xeId, nguoiDungId,khachHangId,
+                        now.format(fmt),
+                        ketThuc.format(fmt),
+                        soNgay
                 );
 
                 if (result) {
                     JOptionPane.showMessageDialog(this, "Tạo hóa đơn thành công!");
-                    // Reset các trường nhập liệu
                     tfXeID.setText("");
                     tfNguoiDungID.setText("");
                     tfKhachHangID.setText("");
@@ -70,6 +109,11 @@ public class HoaDonView extends JFrame {
                 JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        btnHuy.addActionListener(e -> dispose());
     }
-    
+
+   // public static void main(String[] args) {
+    //    SwingUtilities.invokeLater(() -> new HoaDonView().setVisible(true));
+    //}
 }

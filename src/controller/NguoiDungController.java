@@ -1,54 +1,135 @@
 package controller;
 
-import model.*;
+import model.DBConnection;
+import model.NguoiDung;
+
 import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NguoiDungController {
-    public List<NguoiDung> getAll() {
-        List<NguoiDung> list = new ArrayList<>();
-        try (Connection con = DBConnection.getConnection();
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM nguoi_dung")) {
-            while (rs.next()) {
-                NguoiDung nd = new NguoiDung(); // gán các field
-                list.add(nd);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-    public static List<NguoiDung> getDanhSachNhanVien() {
-        List<NguoiDung> danhSach = new ArrayList<>();
-        String sql = "SELECT id, ten_dang_nhap, ho_ten, vai_tro, sdt, ngay_sinh FROM nguoi_dung WHERE vai_tro = 'nhan_vien'";
-        
+
+    // Lấy danh sách tất cả nhân viên
+    public List<NguoiDung> getAllNhanVien() {
+        List<NguoiDung> nhanVienList = new ArrayList<>();
+        String query = "SELECT * FROM nguoi_dung WHERE vai_tro = 'nhan_vien'";
+
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
-            
+
             while (rs.next()) {
-                NguoiDung nv = new NguoiDung();
-                nv.setId(rs.getInt("id"));
-                nv.setTenDangNhap(rs.getString("ten_dang_nhap"));
-                nv.setHoTen(rs.getString("ho_ten"));
-                nv.setVaiTro(rs.getString("vai_tro"));
-                nv.setSdt(rs.getString("sdt"));
-                
-                // Xử lý ngày sinh có thể null
-                Date ngaySinh = rs.getDate("ngay_sinh");
-                if (!rs.wasNull()) {
-                    nv.setNgaySinh(ngaySinh);
-                }
-                
-                danhSach.add(nv);
+                nhanVienList.add(mapResultSetToNguoiDung(rs));
             }
+
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách nhân viên: " + e.getMessage());
-            // Có thể throw custom exception hoặc trả về danh sách rỗng tùy yêu cầu
         }
-        
-        return danhSach;
+
+        return nhanVienList;
+    }
+
+    // Tìm kiếm nhân viên theo họ tên hoặc số điện thoại
+    public List<NguoiDung> searchNhanVien(String keyword) {
+        List<NguoiDung> result = new ArrayList<>();
+        String query = "SELECT * FROM nguoi_dung WHERE vai_tro = 'nhan_vien' AND (ho_ten LIKE ? OR sdt LIKE ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, "%" + keyword + "%");
+            stmt.setString(2, "%" + keyword + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    result.add(mapResultSetToNguoiDung(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi tìm kiếm nhân viên: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    // Thêm mới nhân viên
+    public boolean insertNhanVien(NguoiDung nd) {
+        String query = "INSERT INTO nguoi_dung (ten_dang_nhap, mat_khau, ho_ten, vai_tro, sdt, ngay_sinh) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, nd.getTenDangNhap());
+            stmt.setString(2, nd.getMatKhau() != null ? nd.getMatKhau() : "123456"); // Mật khẩu mặc định nếu null
+            stmt.setString(3, nd.getHoTen());
+            stmt.setString(4, nd.getVaiTro());
+            stmt.setString(5, nd.getSdt());
+            stmt.setDate(6, nd.getNgaySinh() != null ? new java.sql.Date(nd.getNgaySinh().getTime()) : null);
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi thêm nhân viên: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    // Cập nhật thông tin nhân viên
+    public boolean updateNhanVien(NguoiDung nd) {
+        String query = "UPDATE nguoi_dung SET ten_dang_nhap = ?, mat_khau = COALESCE(?, mat_khau), ho_ten = ?, vai_tro = ?, sdt = ?, ngay_sinh = ? WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, nd.getTenDangNhap());
+            stmt.setString(2, nd.getMatKhau()); // Nếu matKhau là null, giữ nguyên mật khẩu cũ
+            stmt.setString(3, nd.getHoTen());
+            stmt.setString(4, nd.getVaiTro());
+            stmt.setString(5, nd.getSdt());
+            stmt.setDate(6, nd.getNgaySinh() != null ? new java.sql.Date(nd.getNgaySinh().getTime()) : null);
+            stmt.setInt(7, nd.getId());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi cập nhật nhân viên: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    // Xóa nhân viên theo ID
+    public boolean deleteNhanVien(int id) {
+        String query = "DELETE FROM nguoi_dung WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi xóa nhân viên: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    // Phương thức hỗ trợ: ánh xạ kết quả từ ResultSet sang đối tượng NguoiDung
+    private NguoiDung mapResultSetToNguoiDung(ResultSet rs) throws SQLException {
+        NguoiDung nd = new NguoiDung();
+        nd.setId(rs.getInt("id"));
+        nd.setTenDangNhap(rs.getString("ten_dang_nhap"));
+        nd.setMatKhau(rs.getString("mat_khau"));
+        nd.setHoTen(rs.getString("ho_ten"));
+        nd.setVaiTro(rs.getString("vai_tro"));
+        nd.setSdt(rs.getString("sdt"));
+        Date ngaySinh = rs.getDate("ngay_sinh");
+        if (ngaySinh != null) {
+            nd.setNgaySinh(ngaySinh);
+        }
+        return nd;
     }
 }

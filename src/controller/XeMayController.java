@@ -61,6 +61,33 @@ public class XeMayController {
         }
         return list;
     }
+    public static XeMay getXeById(int searchId) {
+        XeMay xeMay = null;
+        String query = "SELECT * FROM xe_may WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, searchId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                xeMay = new XeMay(
+                		rs.getInt("id"),
+                        rs.getString("bien_so"),  // Sửa từ "bienSo" thành "bien_so"
+                        rs.getString("ten_xe"),   // Sửa từ "tenXe" thành "ten_xe"
+                        rs.getString("loai_xe"),  // Sửa từ "loaiXe" thành "loai_xe"
+                        rs.getString("trang_thai"), // Sửa từ "trangThai" thành "trang_thai"
+                        rs.getInt("gia_thue_theo_ngay") // Sửa từ "giaThue" thành "gia_thue_theo_nga
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return xeMay;
+    }
 
     public static List<XeMay> getByTrangThai(String trangThai) {
         if (trangThai == null || trangThai.trim().isEmpty()) {

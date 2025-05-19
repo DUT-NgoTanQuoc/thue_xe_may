@@ -25,6 +25,31 @@ public class KhachHangController {
         }
         return list;
     }
+	public static KhachHang getKhachHangById(int id) {
+	    String sql = "SELECT * FROM khach_hang WHERE id = ?";
+	    try (Connection con = DBConnection.getConnection();
+	         PreparedStatement stmt = con.prepareStatement(sql)) {
+
+	        stmt.setInt(1, id);
+	        ResultSet rs = stmt.executeQuery();
+
+	        if (rs.next()) {
+	            KhachHang kh = new KhachHang();
+	            kh.setId(rs.getInt("id"));
+	            kh.setCccd(rs.getString("cccd"));
+	            kh.setTen(rs.getString("ten_khach"));
+	            kh.setDiaChi(rs.getString("dia_chi"));
+	            kh.setSdt(rs.getString("sdt"));
+	            kh.setEmail(rs.getString("email"));
+	            return kh;
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
 	public boolean addKhachHang(KhachHang kh) {
 	    String sql = "INSERT INTO khach_hang (cccd, ten_khach, dia_chi, sdt, email) VALUES (?, ?, ?, ?, ?)";
 	    
@@ -59,6 +84,50 @@ public class KhachHangController {
 	        e.printStackTrace();
 	        return false;
 	    }
+	}
+	public KhachHang timKhachHangTheoCCCD(String cccd) {
+	    String sql = "SELECT * FROM khach_hang WHERE cccd = ?";
+	    try (Connection con = DBConnection.getConnection();
+	         PreparedStatement stmt = con.prepareStatement(sql)) {
+
+	        stmt.setString(1, cccd);
+	        ResultSet rs = stmt.executeQuery();
+
+	        if (rs.next()) {
+	            KhachHang kh = new KhachHang();
+	            kh.setId(rs.getInt("id"));
+	            kh.setCccd(rs.getString("cccd"));
+	            kh.setTen(rs.getString("ten_khach"));
+	            kh.setDiaChi(rs.getString("dia_chi"));
+	            kh.setSdt(rs.getString("sdt"));
+	            kh.setEmail(rs.getString("email"));
+	            return kh;
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+	public static int timKhachHangIdTheoCCCD(String cccd) {
+	    String sql = "SELECT id FROM khach_hang WHERE cccd = ?";
+	    
+	    try (Connection con = DBConnection.getConnection();
+	         PreparedStatement stmt = con.prepareStatement(sql)) {
+	        
+	        stmt.setString(1, cccd.trim()); // Trim để loại bỏ khoảng trắng thừa
+	        
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt("id"); // Trả về ID nếu tìm thấy
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Lỗi khi tìm ID khách hàng theo CCCD: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    
+	    return -1; // Trả về -1 nếu không tìm thấy hoặc có lỗi
 	}
 	public boolean updateKhachHang(KhachHang kh) {
 	    String sql = "UPDATE khach_hang SET cccd = ?, ten = ?, dia_chi = ?, sdt = ?, email = ? WHERE id = ?";

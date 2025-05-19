@@ -9,9 +9,19 @@ public class NguoiDung {
 
     public NguoiDung() {}
 
-    public NguoiDung(int id, String tenDangNhap, String hoTen, String vaiTro, String sdt, Date ngaySinh) {
+    public NguoiDung(int id, String tenDangNhap, String matKhau, String hoTen, String vaiTro, String sdt, Date ngaySinh) {
         this.id = id;
         this.tenDangNhap = tenDangNhap;
+        this.matKhau = matKhau;
+        this.hoTen = hoTen;
+        this.vaiTro = vaiTro;
+        this.sdt = sdt;
+        this.ngaySinh = ngaySinh;
+    }
+    public NguoiDung(int id, String tenDangNhap,  String hoTen, String vaiTro, String sdt, Date ngaySinh) {
+        this.id = id;
+        this.tenDangNhap = tenDangNhap;
+        
         this.hoTen = hoTen;
         this.vaiTro = vaiTro;
         this.sdt = sdt;

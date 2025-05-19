@@ -268,4 +268,13 @@ public class XeMayView extends JFrame {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một xe để xóa", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
         }
     }
+    
+        public static void main(String[] args) {
+            SwingUtilities.invokeLater(() -> {
+                XeMayView view = new XeMayView();
+                view.setVisible(true);
+            });
+        }
+    
+   
 }

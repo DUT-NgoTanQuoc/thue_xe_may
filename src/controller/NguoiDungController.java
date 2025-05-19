@@ -52,6 +52,26 @@ public class NguoiDungController {
 
         return result;
     }
+    public NguoiDung getNguoiDungById(int id) {
+        String query = "SELECT * FROM nguoi_dung WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToNguoiDung(rs);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy người dùng theo ID: " + e.getMessage());
+        }
+
+        return null;
+    }
 
     // Thêm mới nhân viên
     public boolean insertNhanVien(NguoiDung nd) {
@@ -132,4 +152,33 @@ public class NguoiDungController {
         }
         return nd;
     }
+    public NguoiDung layNguoiDung(String tenDangNhap, String matKhau) {
+        String query = "SELECT * FROM nguoi_dung WHERE ten_dang_nhap = ? AND mat_khau = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, tenDangNhap);
+            stmt.setString(2, matKhau);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    NguoiDung nd = new NguoiDung();
+                    nd.setId(rs.getInt("id"));
+                    nd.setTenDangNhap(rs.getString("ten_dang_nhap"));
+                    nd.setMatKhau(rs.getString("mat_khau"));
+                    nd.setHoTen(rs.getString("ho_ten"));
+                    nd.setVaiTro(rs.getString("vai_tro"));
+                    nd.setSdt(rs.getString("sdt"));
+                    nd.setNgaySinh(rs.getDate("ngay_sinh"));
+                    return nd;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy người dùng: " + e.getMessage());
+        }
+
+        return null;
+    } 
 }

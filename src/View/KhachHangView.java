@@ -190,7 +190,7 @@ public class KhachHangView extends JFrame {
         form.setVisible(true);
     }
 
-    // public static void main(String[] args) {
-    //     SwingUtilities.invokeLater(() -> new KhachHangView().setVisible(true));
-    // }
+     public static void main(String[] args) {
+         SwingUtilities.invokeLater(() -> new KhachHangView().setVisible(true));
+     }
 }

@@ -31,8 +31,9 @@ public class MainView extends JFrame {
 
         setVisible(true);
         
-//        public static  main (String arg[]) {
-//        	new MainView().setVisible(true);
-//        }
+      
+    }
+    public static void main (String arg[]) {
+    	new MainView().setVisible(true);
     }
 }

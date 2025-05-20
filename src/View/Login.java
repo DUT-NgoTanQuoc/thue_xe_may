@@ -1,6 +1,8 @@
 package View;
 
 import controller.AuthController;
+import controller.NguoiDungController;
+import model.NguoiDung;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,8 +46,10 @@ public class Login extends JFrame {
                 new Main().setVisible(true); // ví dụ admin vào quản lý nhân viên
                 this.dispose();
             } else if (result == 2) {
+            	NguoiDungController nguoiDungController = new NguoiDungController();
+            	NguoiDung nguoiDung=nguoiDungController.layNguoiDung(username, password);
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công (Nhân viên)");
-                new NVienView().setVisible(true); // ví dụ nhân viên vào xe máy
+                new NVienView(nguoiDung).setVisible(true); // ví dụ nhân viên vào xe máy
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Sai tài khoản hoặc mật khẩu!", "Lỗi", JOptionPane.ERROR_MESSAGE);

@@ -2,6 +2,8 @@ package View;
 
 import controller.HoaDonController;
 import model.HoaDon;
+import model.NguoiDung;
+import model.XeMay;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -15,7 +17,7 @@ import java.util.List;
 public class HoaDonMainView extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
-    private JButton btnThem, btnXoa, btnReload, btnTimKiem, btnThoat;
+    private JButton btnXoa, btnReload, btnTimKiem, btnThoat, btnChiTiet;
     private JTextField txtSearch, txtNgayBatDau;
     private JComboBox<String> cbSearchType;
 
@@ -39,21 +41,19 @@ public class HoaDonMainView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(new EmptyBorder(10, 10, 0, 10));
 
-        btnThem = new JButton(" Thêm Hóa Đơn");
         btnXoa = new JButton(" Xoá Hóa Đơn");
         btnReload = new JButton(" Tải lại");
         btnTimKiem = new JButton(" Tìm kiếm");
         btnThoat = new JButton(" Thoát");
+        btnChiTiet = new JButton(" Chi tiết");
 
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 14);
-        btnThem.setFont(buttonFont);
         btnXoa.setFont(buttonFont);
         btnReload.setFont(buttonFont);
         btnTimKiem.setFont(buttonFont);
         btnThoat.setFont(buttonFont);
+        btnChiTiet.setFont(buttonFont);
 
-        btnThem.setBackground(new Color(0, 123, 255));
-        btnThem.setForeground(Color.WHITE);
         btnXoa.setBackground(new Color(220, 53, 69));
         btnXoa.setForeground(Color.WHITE);
         btnReload.setBackground(new Color(40, 167, 69));
@@ -62,6 +62,8 @@ public class HoaDonMainView extends JFrame {
         btnTimKiem.setForeground(Color.BLACK);
         btnThoat.setBackground(new Color(108, 117, 125));
         btnThoat.setForeground(Color.WHITE);
+        btnChiTiet.setBackground(new Color(0, 123, 255));
+        btnChiTiet.setForeground(Color.WHITE);
 
         cbSearchType = new JComboBox<>(new String[]{"All", "ID Hóa đơn", "ID Khách hàng", "ID Xe"});
         txtSearch = new JTextField(12);
@@ -79,7 +81,7 @@ public class HoaDonMainView extends JFrame {
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         panelButton.setBorder(new EmptyBorder(0, 10, 10, 10));
-        panelButton.add(btnThem);
+        panelButton.add(btnChiTiet);
         panelButton.add(btnXoa);
         panelButton.add(btnReload);
         panelButton.add(btnThoat);
@@ -89,8 +91,6 @@ public class HoaDonMainView extends JFrame {
         add(panelButton, BorderLayout.SOUTH);
 
         loadData();
-
-        btnThem.addActionListener(e -> new HoaDonView().setVisible(true));
 
         btnXoa.addActionListener(e -> {
             int selected = table.getSelectedRow();
@@ -116,7 +116,35 @@ public class HoaDonMainView extends JFrame {
         btnTimKiem.addActionListener(e -> timKiem());
 
         btnThoat.addActionListener(e -> dispose());
+
+        btnChiTiet.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                // Lấy thông tin từ bảng
+                int xeId = (int) tableModel.getValueAt(selectedRow, 1);
+                int nguoiDungId = (int) tableModel.getValueAt(selectedRow, 2);
+                int khachHangId = (int) tableModel.getValueAt(selectedRow, 3);
+                Timestamp batDau = (Timestamp) tableModel.getValueAt(selectedRow, 4);
+                Timestamp ketThuc = (Timestamp) tableModel.getValueAt(selectedRow, 5);
+                long tongTien = (long) tableModel.getValueAt(selectedRow, 6);
+
+                // Giả định có phương thức lấy thông tin xe và người dùng từ ID
+              
+
+                // Mở form chi tiết
+                HoaDonDetailView detailView = new HoaDonDetailView(xeId, nguoiDungId, khachHangId, batDau, ketThuc, tongTien);
+                detailView.setVisible(true);
+                
+                // Hiển thị thông tin hóa đơn (cần thêm phương thức trong HoaDonDetailView)
+               // detailView.displayHoaDonDetails(xeId, nguoiDungId, khachHangId, batDau, ketThuc, tongTien);
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn để xem chi tiết.");
+            }
+        });
     }
+
+    // Các phương thức giả định - cần implement thực tế
+    
 
     private void timKiem() {
         String kieu = (String) cbSearchType.getSelectedItem();
@@ -188,7 +216,7 @@ public class HoaDonMainView extends JFrame {
         }
     }
 
-    // public static void main(String[] args) {
-    //     SwingUtilities.invokeLater(() -> new HoaDonMainView().setVisible(true));
-    // }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new HoaDonMainView().setVisible(true));
+    }
 }

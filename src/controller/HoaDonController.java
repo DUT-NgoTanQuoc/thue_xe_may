@@ -51,7 +51,7 @@ public class HoaDonController {
     public static boolean taoHoaDon(int xeId, int nguoiDungId, int khachHangId, 
             String batDauStr, String ketThucStr, int soNgay) {
     	if (!kiemTraTrangThaiXe(xeId, "san_sang")) {
-            // Nếu xe không sẵn sàng (có thể là "dang_thue" hoặc "hong"), không thể tạo hóa đơn
+            
             JOptionPane.showMessageDialog(null, "Xe không sẵn sàng để thuê.", 
                                           "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -91,7 +91,7 @@ public class HoaDonController {
 	return false;
     } 
     private static boolean kiemTraTrangThaiXe(int xeId, String trangThai) {
-        String sql = "SELECT COUNT(*) FROM xe WHERE xe_id = ? AND trang_thai = ?";
+        String sql = "SELECT COUNT(*) FROM xe_may WHERE id = ? AND trang_thai = ?";
         
         try (Connection con = DBConnection.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
